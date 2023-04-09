@@ -4,8 +4,7 @@
 
 		</view>
 		<view class="goods-wrapper">
-			<LeftRightScroll :goodsList="goodsList"></LeftRightScroll>
-
+			<LeftRightScroll :isFixed="false" :isShowTitle="true" :goodsList="goodsList"></LeftRightScroll>
 		</view>
 	</view>
 </template>
@@ -58,7 +57,7 @@ export default {
 				}]
 			},
 			{
-				title: "第二个",
+				title: "第san个",
 				children: [{
 					img: "https://img2.baidu.com/it/u=849995377,520435495&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
 					title: "1的子孩子",
@@ -72,7 +71,7 @@ export default {
 				}]
 			},
 			{
-				title: "第二个",
+				title: "第si个",
 				children: [{
 					img: "https://img2.baidu.com/it/u=849995377,520435495&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
 					title: "1的子孩子",
@@ -84,6 +83,24 @@ export default {
 					labels: ["库存 99", "牛奶"],
 					price: "5.8"
 				}]
+			},
+			{
+				title: "第五个",
+				children: new Array(10).fill({
+					img: "https://img2.baidu.com/it/u=849995377,520435495&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
+					title: "1的子孩子",
+					labels: ["库存 99", "门店销量第一名"],
+					price: "5.8"
+				})
+			},
+			{
+				title: "第六个",
+				children: new Array(1).fill({
+					img: "https://img2.baidu.com/it/u=849995377,520435495&fm=253&fmt=auto&app=138&f=JPEG?w=800&h=500",
+					title: "1的子孩子",
+					labels: ["库存 99", "门店销量第一名"],
+					price: "5.8"
+				})
 			},
 
 			]

@@ -6,10 +6,16 @@
                 }}
             </view>
         </scroll-view>
-        <scroll-view class="right-wrapper" :scroll-y="true" :scroll-top="rightScrollTop" @scroll="handleRightScroll"
+        <view class="right-wrapper">
+            <view :class="{
+                ellipsis: true,
+                fixed: true,
+                'static-pos':  isFixed && !isShowTitle
+            }" v-if="isFixed">{{ activeText }}</view>
+            <scroll-view class="right__inner" :scroll-y="true" :scroll-top="rightScrollTop" @scroll="handleRightScroll"
             scroll-with-animation :show-scrollbar="false">
             <view v-for="(item, index) in goodsList" :key="index" class="right-item-wrapper">
-                <view class="right-list-title ellipsis">{{ item.title }}</view>
+                <view class="right-list-title ellipsis" v-if="isShowTitle">{{ item.title }}</view>
                 <view class="goods-wrapper">
                     <view class="goods-item" v-for="cItem in item.children" :key="cItem.id">
                         <image :src="cItem.img" class="right-item-img" />
@@ -38,6 +44,8 @@
                 </view>
             </view>
         </scroll-view>
+        </view>
+        
     </view>
 </template>
 
@@ -58,24 +66,34 @@ export default {
     props: {
         goodsList: {
             required: true
+        },
+        isFixed: {
+            type: Boolean,
+            default: false,
+        },
+        isShowTitle: {
+            type: Boolean,
+            default: true,
         }
     },
     data() {
         return {
             categoryList: [],
-            activeIndex: 0, // 当前激活内容
-            rightNodePos: [],
+            activeIndex: 0, // 当前激活索引
+            rightNodePos: [], // 右侧滚动距离列表
             rightScrollTop: null,
             leftActiveId: "", // 左侧激活id
-            leftPending: false,
-            timer: null, // 点击左侧，设置滚动高度，防止触发scroll事件的标志
+            leftPending: false, // 防止点击左侧，触发滚动事件标志
+            timer: null,
+            activeText: "", // 固定位置展示内容
+            curRightScrollTop: 0, // 当前滚动距离
         }
     },
     methods: {
         getPosition() {
             if (this.goodsList.length == 0) return;
             const query = uni.createSelectorQuery().in(this);
-            query.selectAll('.right-list-title').boundingClientRect(data => {
+            query.selectAll('.right-item-wrapper').boundingClientRect(data => {
                 let last = data[0].top
                 let temp = data.map(item => {
                     let res = item.top - last;
@@ -86,16 +104,17 @@ export default {
                     temp[i] = Math.round(temp[i] + temp[i - 1]);
                 }
                 this.rightNodePos = temp;
+                this.getActiveText();
             }).exec();
         },
         handleLeftClick(index) {
             this.timer && clearTimeout(this.timer)
-            // 处理点击左侧栏，右侧触发滚动事件 - start
+            // 处理点击左侧栏，右侧在滚动时会触发滚动事件的bug - start
             this.leftPending = true;
             this.timer = setTimeout(() => {
                 this.leftPending = false;
             }, 500)
-            // 处理点击左侧栏，右侧触发滚动事件 - end
+            // 处理点击左侧栏，右侧在滚动时会触发滚动事件的bug - end
             this.rightScrollTop = this.rightNodePos[index];
             // 处理点击左侧栏后，右侧移动一部分，然后再次点击同一个不触发更新 - start
             this.$nextTick(() => {
@@ -105,20 +124,30 @@ export default {
             this.activeIndex = index;
         },
         handleRightScroll(e) {
+            this.curRightScrollTop = e.detail.scrollTop;
+            this.getActiveText();
             if (this.leftPending) return;
             this.handleLeftActive(e.detail.scrollTop);
         },
         handleLeftActive(top) {
+            this.activeIndex = this.getActiveIndex(top)
+        },
+        getActiveIndex(top) {
             let scrollTop = Math.round(top);
             for (let i = 0; i < this.rightNodePos.length - 1; i++) {
                 let pre = this.rightNodePos[i];
                 let cur = this.rightNodePos[i + 1];
                 if (scrollTop >= pre && scrollTop < cur) {
-                    return this.activeIndex = i;
+                    return i;
                 }
             }
-            this.activeIndex = this.rightNodePos.length - 1;
-        }
+            return (this.rightNodePos.length &&  this.rightNodePos.length - 1) || 0;
+        },
+        getActiveText() {
+            if(!this.isFixed) return;
+            let index = this.getActiveIndex(this.curRightScrollTop)
+            this.activeText = this.goodsList[index].title;
+        },
     },
     watch: {
         activeIndex(newVal) {
@@ -126,10 +155,13 @@ export default {
         },
         goodsList() {
             this.getPosition();
-            this.categoryList = this.goodsList.map(item => item.title)
+            this.categoryList = this.goodsList.map(item => item.title);
         }
     },
     created() {
+        setInterval(() => {
+            console.log(this.rightNodePos);
+        }, 5000)
     },
     mounted() {
     }
@@ -168,11 +200,27 @@ export default {
         min-width: 0;
         height: 100%;
         padding: 20rpx 0 20rpx 20rpx;
-
+        position: relative;
+        .right__inner {
+            height: 100%;
+        }
+        .fixed {
+            position: absolute;
+            left: 20rpx;
+            top: 20rpx;
+            padding: 10rpx 0;
+            font-weight: bold;
+            width: 100%;
+            background: #fff;
+            z-index: 10;
+            &.static-pos {
+                position: static;
+            }
+        }
         .right-list-title {
             padding: 10rpx 0;
             font-weight: bold;
-            width: 90%;
+            width: 100%;
         }
 
         .goods-wrapper {
