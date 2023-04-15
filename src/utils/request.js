@@ -90,7 +90,7 @@ instance.interceptors.response.use(
         data = { ...response.data }
 
         // 如果请求失败
-        if (data.code != 0) {
+        if (data.code != 200) {
             if (!noToast) {
                 uni.showToast({ title: data.message || codeMessage[data.code] || '未知原因', icon: 'none' })
             }
