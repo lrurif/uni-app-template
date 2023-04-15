@@ -4,6 +4,8 @@ import App from './App'
 import api from "@/api"
 Vue.prototype.$api = api;
 import store from './store/index.js';
+import uView from "uview-ui"
+Vue.use(uView);
 // 导入路由拦截
 import {router,RouterMount} from '@/router/index.js'
 Vue.use(router)

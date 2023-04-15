@@ -12,5 +12,6 @@ module.exports = {
 				}, true )
 			})
 		]
-	}
+	},
+	transpileDependencies: ['uview-ui']
 }
