@@ -1,10 +1,10 @@
 <template>
 	<view class="page">
 		<view class="swiper-area">
-
+			{{ num.toFixed(1) }}
 		</view>
 		<view class="goods-wrapper">
-			<LeftRightScroll :isFixed="false" :isShowTitle="true" :goodsList="goodsList"></LeftRightScroll>
+			<LeftRightScroll :isFixed="true" :isShowTitle="true" :goodsList="goodsList"></LeftRightScroll>
 		</view>
 	</view>
 </template>
@@ -18,10 +18,10 @@ export default {
 	data() {
 		return {
 			goodsList: [],
+			num: 1
 		}
 	},
 	onLoad() {
-
 	},
 	methods: {
 
@@ -102,7 +102,6 @@ export default {
 					price: "5.8"
 				})
 			},
-
 			]
 		}, 1000)
 
