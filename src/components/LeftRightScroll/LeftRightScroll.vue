@@ -8,44 +8,44 @@
         </scroll-view>
         <view class="right-wrapper">
             <view :class="{
-                ellipsis: true,
-                fixed: true,
-                'static-pos':  isFixed && !isShowTitle
-            }" v-if="isFixed">{{ activeText }}</view>
+                    ellipsis: true,
+                    fixed: true,
+                    'static-pos': isFixed && !isShowTitle
+                }" v-if="isFixed">{{ activeText }}</view>
             <scroll-view class="right__inner" :scroll-y="true" :scroll-top="rightScrollTop" @scroll="handleRightScroll"
-            scroll-with-animation :show-scrollbar="false">
-            <view v-for="(item, index) in goodsList" :key="index" class="right-item-wrapper">
-                <view class="right-list-title ellipsis" v-if="isShowTitle">{{ item.title }}</view>
-                <view class="goods-wrapper">
-                    <view class="goods-item" v-for="cItem in item.children" :key="cItem.id">
-                        <image :src="cItem.img" class="right-item-img" />
-                        <view class="right-item-info">
-                            <view class="title ellipsis">
-                                {{ cItem.title }}
-                            </view>
-                            <view class="labels-wrapper">
-                                <view class="label" v-for="label in cItem.labels" :key="label">
-                                    {{ label }}
+                scroll-with-animation :show-scrollbar="false">
+                <view v-for="(item, index) in goodsList" :key="index" class="right-item-wrapper">
+                    <view class="right-list-title ellipsis" v-if="isShowTitle">{{ item.title }}</view>
+                    <view class="goods-wrapper">
+                        <view class="goods-item" v-for="cItem in item.children" :key="cItem.id">
+                            <image :src="cItem.img" class="right-item-img" />
+                            <view class="right-item-info">
+                                <view class="title ellipsis">
+                                    {{ cItem.title }}
                                 </view>
-                            </view>
-                            <view class="info__bottom">
-                                <view class="price">
-                                    <text class="unit">￥</text>{{ cItem.price }}
+                                <view class="labels-wrapper">
+                                    <view class="label" v-for="label in cItem.labels" :key="label">
+                                        {{ label }}
+                                    </view>
                                 </view>
-                                <view class="nums-btn">
-                                    <image src="@/static/images/reduce.png" class="btn" />
-                                    <view class="nums">1</view>
-                                    <image src="@/static/images/add.png" class="btn" />
+                                <view class="info__bottom">
+                                    <view class="price">
+                                        <text class="unit">￥</text>{{ cItem.price }}
+                                    </view>
+                                    <view class="nums-btn">
+                                        <image src="@/static/images/reduce.png" class="btn" />
+                                        <view class="nums">1</view>
+                                        <image src="@/static/images/add.png" class="btn" />
+                                    </view>
                                 </view>
-                            </view>
 
+                            </view>
                         </view>
                     </view>
                 </view>
-            </view>
-        </scroll-view>
+            </scroll-view>
         </view>
-        
+
     </view>
 </template>
 
@@ -141,10 +141,10 @@ export default {
                     return i;
                 }
             }
-            return (this.rightNodePos.length &&  this.rightNodePos.length - 1) || 0;
+            return (this.rightNodePos.length && this.rightNodePos.length - 1) || 0;
         },
         getActiveText() {
-            if(!this.isFixed) return;
+            if (!this.isFixed) return;
             let index = this.getActiveIndex(this.curRightScrollTop)
             this.activeText = this.goodsList[index].title;
         },
@@ -178,9 +178,11 @@ export default {
     .left-wrapper {
         width: 160rpx;
         height: 100%;
-        background: #F7F8FA;
-
+        background: #f2f2f2;
+        --active-color: #fff;
+        --size: 10px;
         .left-item {
+            position: relative;
             padding: 40rpx 10rpx;
             text-align: center;
             font-size: 24rpx;
@@ -188,9 +190,30 @@ export default {
             color: #646566;
 
             &.active {
-                background-color: #fff;
+                background-color: var(--active-color);
                 font-weight: 500;
                 color: #323233;
+            }
+
+            &.active::after {
+                content: "";
+                position: absolute;
+                right: 0px;
+                top: calc(-1 * var(--size));
+                width: var(--size);
+                height: var(--size);
+                background-image: radial-gradient(circle at left top, transparent 0, transparent var(--size), var(--active-color) var(--size), var(--active-color) 100%);
+            }
+
+            &.active::before {
+                content: "";
+                position: absolute;
+                right: 0px;
+                z-index: 1;
+                bottom: calc(-1 * var(--size));
+                width: var(--size);
+                height: var(--size);
+                background-image: radial-gradient(circle at left bottom, transparent 0, transparent var(--size), var(--active-color) var(--size), var(--active-color) 100%);
             }
         }
     }
@@ -201,9 +224,11 @@ export default {
         height: 100%;
         padding: 20rpx 0 20rpx 20rpx;
         position: relative;
+
         .right__inner {
             height: 100%;
         }
+
         .fixed {
             position: absolute;
             left: 20rpx;
@@ -213,10 +238,12 @@ export default {
             width: 100%;
             background: #fff;
             z-index: 10;
+
             &.static-pos {
                 position: static;
             }
         }
+
         .right-list-title {
             padding: 10rpx 0;
             font-weight: bold;
@@ -309,5 +336,4 @@ export default {
             }
         }
     }
-}
-</style>
+}</style>
