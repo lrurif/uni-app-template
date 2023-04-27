@@ -203,6 +203,9 @@ export default {
                 width: var(--size);
                 height: var(--size);
                 background-image: radial-gradient(circle at left top, transparent 0, transparent var(--size), var(--active-color) var(--size), var(--active-color) 100%);
+                // 第二种实现方式-clip-path
+                // clip-path: path("M 20 20 L 20 0 A 20 20 0 0 1 0 20");
+                // background-color: var(--active-color);
             }
 
             &.active::before {
@@ -214,6 +217,8 @@ export default {
                 width: var(--size);
                 height: var(--size);
                 background-image: radial-gradient(circle at left bottom, transparent 0, transparent var(--size), var(--active-color) var(--size), var(--active-color) 100%);
+                // clip-path: path("M 20 0 L 0 0 A 20 20 0 0 1 20 20");
+                // background-color: var(--active-color);
             }
         }
     }
